@@ -17,3 +17,5 @@ www.youtube.com/watch?v=vihPqElnht4&ab
 - adding a distance ma bober to get a better angle then what it currently has (more towards snells law)
 - adding another tint for inner tint instead of only having the option for the outside
 - adding joe (would be a great addition)                             joe mama
+  {what you can do}
+- you may edit this shader & even redistribute it but i only ask that you credit me somewhere's in it!
