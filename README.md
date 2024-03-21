@@ -7,3 +7,13 @@ there might be some parts that can be improved upon & if there is PLEASE feel fr
 
 anyways! hope you enjoy the shader(s) and make some cool stuff with it! this is intended for URP in Unity so idrk if it works on HDRP n such & its VRChat compatible
 www.youtube.com/watch?v=vihPqElnht4&ab
+
+
+~{Side Note}~
+there's alot that i would change and even add BUT i probably wont because well.. im just lazy
+
+- things i can but may not change -
+- adding a mask to the refraction to prevent bleeding fromt objects in front
+- adding a distance ma bober to get a better angle then what it currently has (more towards snells law)
+- adding another tint for inner tint instead of only having the option for the outside
+- adding joe (would be a great addition)                             joe mama
