@@ -10,7 +10,7 @@ www.youtube.com/watch?v=vihPqElnht4&ab
 
 
 {Side Note}
-there's alot that i would change and even add BUT i probably wont because well.. im just lazy
+- there's alot that i would change and even add BUT i probably wont because well.. im just lazy
 
 {things i can but may not change}
 - adding a mask to the refraction to prevent bleeding fromt objects in front
