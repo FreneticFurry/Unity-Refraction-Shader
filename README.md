@@ -9,10 +9,10 @@ anyways! hope you enjoy the shader(s) and make some cool stuff with it! this is 
 www.youtube.com/watch?v=vihPqElnht4&ab
 
 
-~{Side Note}~
+{Side Note}
 there's alot that i would change and even add BUT i probably wont because well.. im just lazy
 
-- things i can but may not change -
+{things i can but may not change}
 - adding a mask to the refraction to prevent bleeding fromt objects in front
 - adding a distance ma bober to get a better angle then what it currently has (more towards snells law)
 - adding another tint for inner tint instead of only having the option for the outside
