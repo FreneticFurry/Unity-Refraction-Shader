@@ -1,4 +1,4 @@
-Shader "Frenetic/Standard_MultiRefraction" {
+Shader "Frenetic/Standard_SingularRefraction" {
     Properties {
         [Header(Standard)]
         _Color("Texture Color/Tint", Color) = (1, 1, 1, 1)
@@ -72,27 +72,26 @@ Shader "Frenetic/Standard_MultiRefraction" {
         
         inline float4 Refraction(Input i, SurfaceOutputStandard o, float IOR, float BA) {
             float4 screenPos = i.screenPos;
-            screenPos.y = (screenPos.y - screenPos.w * 0.5) * _ProjectionParams.x * -1 + screenPos.w * 0.5;
-            screenPos.w += 0.00000000001;
+            screenPos.y = (screenPos.y - screenPos.w * 0.5) * _ProjectionParams.xy * -1 + screenPos.w * 0.5;
             float3 RO = (IOR - 1.0) * mul(UNITY_MATRIX_V, float4(o.Normal, 0.0)) * (_IORT - dot(o.Normal, normalize(UnityWorldSpaceViewDir(i.worldPos))));
-            float2 grabUV = (screenPos.xy / screenPos.w + float2(RO.x, RO.y));
+            float2 grabUV = (screenPos.xyz / screenPos.w + float2(RO.xy));
             float2 aberrationUV_R = grabUV + float2(_AberrationAmount/35, _AberrationAmount/-35);
             float2 aberrationUV_G = grabUV;
             float2 aberrationUV_B = grabUV - float2(_AberrationAmount/35, _AberrationAmount/-35);
             float4 RC = float4(
-                blur(_GrabTexture, aberrationUV_R, BA/350).r,
-                blur(_GrabTexture, aberrationUV_G, BA/350).g,
-                blur(_GrabTexture, aberrationUV_B, BA/350).b,
+                blur(_GrabTexture, aberrationUV_R, BA/360).r,
+                blur(_GrabTexture, aberrationUV_G, BA/360).g,
+                blur(_GrabTexture, aberrationUV_B, BA/360).b,
                 1.0
             );
             return RC;
         }
         
         void Tint(Input i, SurfaceOutputStandard o, inout half4 C) {
-            C.rgb = C.rgb + Refraction(i, o, _IOR, _BlurAMT) * (1 - C.a);
+            C.rgb = C.rgb + Refraction(i, o, _IOR, _BlurAMT) * (0.45 - C.a/2.2);
             float ta = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _TintRadius);
             C.rgb = lerp(C.rgb, _TintColor.rgb, ta * _TintColor.a);
-        }        
+        }
 
         void surf(Input i, inout SurfaceOutputStandard o) {
             fixed4 c = tex2D(_MainTex, i.uv_MainTex) * _Color;
@@ -101,7 +100,6 @@ Shader "Frenetic/Standard_MultiRefraction" {
             o.Metallic = _Mat;
             o.Smoothness = _Smooth;
             o.Normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv_NormalMap), _NormalIntensity);
-            o.Normal = o.Normal + 0.00001 * i.screenPos * i.worldPos;
         }
         ENDCG
 
