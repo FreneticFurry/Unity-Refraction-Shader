@@ -1,37 +1,40 @@
 Shader "Frenetic/Standard_SingularRefraction" {
     Properties {
-        [Header(Standard)]
+        [Header(Standard)] [Space] [Space]
         _Color("Texture Color/Tint", Color) = (1, 1, 1, 1)
         _MainTex("Texture (RGBA)", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
         _NormalIntensity("Normal Intensity", Range(-2, 2)) = 0
         _Smooth("Smoothness", Range(0, 1)) = 0.3
         _Mat("Metallic", Range(0, 1)) = 0.5
-        [Header(Refraction)]
+		[Header(Normal Map Scrolling)]
+        _NormalScroll("Normal Scroll", Vector) = (0,0,0,0)
+        [Header(Refraction)] [Space] [Space]
         _IOR("IOR", Range(0, 2)) = 1
         _IORT("IOR-Type", Range(-0.5, 0.5)) = 0
         _AberrationAmount("Aberration Amount", Range(0, 0.1)) = 0
         _BlurAMT("Blur", Range(0, 1)) = 0
-        [Header(Tint Outline)]
-        _TintColor("Tint Color", Color) = (0, 0, 0, 0)
-        _TintRadius("Tint Radius", Range(0, 1)) = 1
+        [Header(Tint Outline)] [Space] [Space]
+        _OutterTintColor("Outter Tint Color", Color) = (0, 0, 0, 0)
+		_InnerTintColor("Inner Tint Color", Color) = (1, 1, 1, 0)
+        _OutterTintRadius("Outter Tint Radius", Range(0, 1)) = 0
+        _InnerTintRadius("Inner Tint Radius", Range(0, 1)) = 1
     }
 
     SubShader {
-        Tags { "RenderType" = "Opaque" "Queue" = "Transparent+0" "IsEmissive" = "true" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent"}
         LOD 200
-        Cull Off
 
         GrabPass { "_GrabbyHands" }
 
-        CGINCLUDE
+        CGPROGRAM
+		#pragma surface surf Standard keepalpha finalcolor:Tint fullforwardshadows
         #pragma target 5.0
         #pragma multi_compile _ALPHAPREMULTIPLY_ON
 
-        struct Input {
+		struct Input {
             float2 uv_MainTex;
             float2 uv_NormalMap;
-            INTERNAL_DATA
             float4 screenPos;
             float3 worldPos;
         };
@@ -45,18 +48,19 @@ Shader "Frenetic/Standard_SingularRefraction" {
         uniform float _IOR;
         uniform float _IORT;
         uniform float _BlurAMT;
-        uniform fixed4 _TintColor;
-        uniform float _TintRadius;
+        uniform fixed4 _OutterTintColor;
+		uniform fixed4 _InnerTintColor;
+        uniform float _OutterTintRadius;
+		uniform float _InnerTintRadius;
         uniform float _NormalIntensity;
         uniform float _AberrationAmount;
+        uniform fixed2 _NormalScroll;
 
         float4 blur(sampler2D tex, float2 uv, float r) {
             float4 c = 0;
             float ws = 0;
         
-            float wss[25] = { 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 
-                                  0.075, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 
-                                  0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075 };
+            float wss[25] = { 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075, 0.075 };
             [unroll(5)]
             for (int x = -2; x <= 2; x++) {
                 [unroll(5)]
@@ -82,29 +86,30 @@ Shader "Frenetic/Standard_SingularRefraction" {
                 blur(_GrabbyHands, aberrationUV_R, BA/360).r,
                 blur(_GrabbyHands, aberrationUV_G, BA/360).g,
                 blur(_GrabbyHands, aberrationUV_B, BA/360).b,
-                1.0
+                0.0
             );
             return RC;
         }
-        
+
         void Tint(Input i, SurfaceOutputStandard o, inout half4 C) {
-            C.rgb = C.rgb + Refraction(i, o, _IOR, _BlurAMT) * (0.45 - C.a/2.2);
-            float ta = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _TintRadius);
-            C.rgb = lerp(C.rgb, _TintColor.rgb, ta * _TintColor.a);
+            if (C.a < 0.999)
+            {
+                C.rgb = Refraction(i, o, _IOR, _BlurAMT) * 0.5 + C.rgb * C.a;
+				float ita = 1.0 - saturate(2 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _InnerTintRadius/_InnerTintRadius);
+				float ota = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _OutterTintRadius/_OutterTintRadius);
+                C.rgb = lerp(C.rgb, _InnerTintColor.rgb, ita * _InnerTintColor.a);
+				C.rgb = lerp(C.rgb, _OutterTintColor.rgb, ota * _OutterTintColor.a);
+            }
         }
 
         void surf(Input i, inout SurfaceOutputStandard o) {
             fixed4 c = tex2D(_MainTex, i.uv_MainTex) * _Color;
             o.Albedo = c.rgb;
             o.Alpha = c.a;
-            o.Metallic = _Mat;
+            o.Metallic = _Mat/1.1;
             o.Smoothness = _Smooth;
-            o.Normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv_NormalMap), _NormalIntensity);
+            o.Normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv_NormalMap + float2(_Time.x * _NormalScroll.x, _Time.x * _NormalScroll.y)), _NormalIntensity);
         }
-        ENDCG
-
-        CGPROGRAM
-        #pragma surface surf Standard keepalpha finalcolor:Tint fullforwardshadows exclude_path:deferred
         ENDCG
     }
     Fallback "Diffuse"
