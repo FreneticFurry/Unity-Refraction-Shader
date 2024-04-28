@@ -15,7 +15,7 @@ www.youtube.com/watch?v=vihPqElnht4&ab
 {things i can but may not change}
 - adding a mask to the refraction to prevent bleeding from objects in front so it only refracts the ones behind it properly
 - adding a distance ma bober to get a better angle then what it currently has (more towards snells law)
-- adding another tint for inner tint instead of only having the option for the outside
+- adding another tint for inner tint instead of only having the option for the outside -
 - adding joe (would be a great addition)
 
 {what you can do}
