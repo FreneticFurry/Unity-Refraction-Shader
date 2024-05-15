@@ -31,7 +31,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         GrabPass { "_GrabbyHands" }
 
         CGPROGRAM
-		#pragma surface surf Standard finalcolor:Tint
+	#pragma surface surf Standard finalcolor:Tint
         #pragma target 5.0
         #pragma multi_compile_instancing
 
