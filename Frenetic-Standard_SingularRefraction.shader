@@ -10,7 +10,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         _EmissionIntensity("Emission Intensity", Range(0, 2)) = 0
         _Smooth("Smoothness", Range(0, 1)) = 0.3
         _Mat("Metallic", Range(0, 1)) = 0.5
-		[Header(Normal Map Scrolling)]
+	[Header(Normal Map Scrolling)]
         _NormalScroll("Normal Scroll", Vector) = (0,0,0,0)
         [Header(Refraction)] [Space] [Space]
         _IOR("IOR", Range(0, 2)) = 1
@@ -19,7 +19,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         _BlurAMT("Blur", Range(0, 1)) = 0
         [Header(Tint Outline)] [Space] [Space]
         _OutterTintColor("Outter Tint Color", Color) = (0, 0, 0, 0)
-		_InnerTintColor("Inner Tint Color", Color) = (1, 1, 1, 0)
+	_InnerTintColor("Inner Tint Color", Color) = (1, 1, 1, 0)
         _OutterTintRadius("Outter Tint Radius", Range(0, 1)) = 0
         _InnerTintRadius("Inner Tint Radius", Range(0, 1)) = 1
     }
@@ -35,7 +35,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         #pragma target 5.0
         #pragma multi_compile_instancing
 
-		struct Input {
+	struct Input {
             float2 uv_MainTex;
             float2 uv_NormalMap;
             float4 screenPos;
@@ -53,9 +53,9 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         uniform float _IORT;
         uniform float _BlurAMT;
         uniform fixed4 _OutterTintColor;
-		uniform fixed4 _InnerTintColor;
+	uniform fixed4 _InnerTintColor;
         uniform float _OutterTintRadius;
-		uniform float _InnerTintRadius;
+	uniform float _InnerTintRadius;
         uniform float _NormalIntensity;
         uniform float _AberrationAmount;
         uniform fixed2 _NormalScroll;
@@ -102,10 +102,10 @@ Shader "Frenetic/Standard-SingleGrabpass" {
             if (C.a < 0.999)
             {
                 C.rgb = Refraction(i, o, _IOR, _BlurAMT) * 1 + C.rgb * C.a;
-				float ita = 1.0 - saturate(2 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _InnerTintRadius/_InnerTintRadius);
-				float ota = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _OutterTintRadius/_OutterTintRadius);
+		float ita = 1.0 - saturate(2 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _InnerTintRadius/_InnerTintRadius);
+		float ota = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _OutterTintRadius/_OutterTintRadius);
                 C.rgb = lerp(C.rgb, _InnerTintColor.rgb, ita * _InnerTintColor.a);
-				C.rgb = lerp(C.rgb, _OutterTintColor.rgb, ota * _OutterTintColor.a);
+		C.rgb = lerp(C.rgb, _OutterTintColor.rgb, ota * _OutterTintColor.a);
             }
             #endif
         }
@@ -119,7 +119,6 @@ Shader "Frenetic/Standard-SingleGrabpass" {
             o.Normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv_NormalMap + float2(_Time.x * _NormalScroll.x, _Time.x * _NormalScroll.y)), _NormalIntensity);
             o.Emission = tex2D(_EmissTex, i.uv_MainTex).rgb * _EmissionIntensity + _EmissionColor.rgb * _EmissionIntensity;
         }
-        
         ENDCG
     }
     Fallback "Diffuse"
