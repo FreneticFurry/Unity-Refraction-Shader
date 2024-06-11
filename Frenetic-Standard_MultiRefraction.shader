@@ -108,11 +108,11 @@ Shader "Frenetic/Standard-MultiGrabpass" {
             {
                 float4 refractedColor = Refraction(i, o, _IOR, _BlurAMT);
                 C.rgb = lerp(C.rgb, refractedColor.rgb, 1.0 - _Transparency);
-                float ita = 1.0 - saturate(2 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _InnerTintRadius/_InnerTintRadius);
-                float ota = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _OutterTintRadius/_OutterTintRadius);
-                C.rgb = lerp(C.rgb, _InnerTintColor.rgb, ita * _InnerTintColor.a);
-                C.rgb = lerp(C.rgb, _OutterTintColor.rgb, ota * _OutterTintColor.a);
             }
+            float ita = 1.0 - saturate(2 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _InnerTintRadius/_InnerTintRadius);
+            float ota = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _OutterTintRadius/_OutterTintRadius);
+            C.rgb = lerp(C.rgb, _InnerTintColor.rgb, ita * _InnerTintColor.a);
+            C.rgb = lerp(C.rgb, _OutterTintColor.rgb, ota * _OutterTintColor.a);
             #endif
         }
 
