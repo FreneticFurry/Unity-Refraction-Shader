@@ -88,15 +88,15 @@ Shader "Frenetic/Standard-MultiGrabpass" {
         inline float4 Refraction(Input i, SurfaceOutputStandard o, float IOR, float BA) {
             float4 screenPos = i.screenPos;
             screenPos.y = (screenPos.y) * _ProjectionParams.xy * -1;
-            float3 RO = (IOR - 1) * mul(UNITY_MATRIX_V, float4(o.Normal, 0.0)) * (_IORT - dot(o.Normal, normalize(UnityWorldSpaceViewDir(i.worldPos))));
+            float3 RO = (IOR - 1) * mul(UNITY_MATRIX_V, float4(o.Normal, 0.0)) * (_IORT - dot(o.Normal, normalize(UnityWorldSpaceViewDir(i.worldPos)))) / length(i.worldPos - _WorldSpaceCameraPos);
             float2 grabUV = (screenPos.xyz / screenPos.w + float2(RO.xy));
             float2 aberrationUV_R = grabUV + float2(_AberrationAmount/35, _AberrationAmount/-35);
             float2 aberrationUV_G = grabUV;
             float2 aberrationUV_B = grabUV - float2(_AberrationAmount/35, _AberrationAmount/-35);
             float4 RC = float4(
-                blur(_GrabTexture, aberrationUV_R, BA/360).r,
-                blur(_GrabTexture, aberrationUV_G, BA/360).g,
-                blur(_GrabTexture, aberrationUV_B, BA/360).b,
+                blur(_GrabbyHands, aberrationUV_R, BA/360).r,
+                blur(_GrabbyHands, aberrationUV_G, BA/360).g,
+                blur(_GrabbyHands, aberrationUV_B, BA/360).b,
                 0.0
             );
             return RC;
