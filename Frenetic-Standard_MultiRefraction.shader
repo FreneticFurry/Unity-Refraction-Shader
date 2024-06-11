@@ -94,9 +94,9 @@ Shader "Frenetic/Standard-MultiGrabpass" {
             float2 aberrationUV_G = grabUV;
             float2 aberrationUV_B = grabUV - float2(_AberrationAmount/35, _AberrationAmount/-35);
             float4 RC = float4(
-                blur(_GrabbyHands, aberrationUV_R, BA/360).r,
-                blur(_GrabbyHands, aberrationUV_G, BA/360).g,
-                blur(_GrabbyHands, aberrationUV_B, BA/360).b,
+                blur(_GrabTexture, aberrationUV_R, BA/360).r,
+                blur(_GrabTexture, aberrationUV_G, BA/360).g,
+                blur(_GrabTexture, aberrationUV_B, BA/360).b,
                 0.0
             );
             return RC;
