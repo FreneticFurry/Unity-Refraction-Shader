@@ -10,8 +10,8 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         _EmissTex("Emission (RGBA)", 2D) = "black" {}
         _EmissionColor("Emission Tint", Color) = (0, 0, 0, 0)
         _EmissionIntensity("Emission Intensity", Range(0, 2)) = 0
-        _Smooth("Smoothness", Range(0, 1)) = 0.3
-        _Mat("Metallic", Range(0, 1)) = 0.5
+        _Smooth("Smoothness", Range(0, 2)) = 0.5
+        _Mat("Metallic", Range(0, 1)) = 0
 		[Header(Normal Map Scrolling)]
         _NormalScroll("Normal Scroll", Vector) = (0,0,0,0)
         [Header(Refraction)] [Space] [Space]
@@ -30,6 +30,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
         Tags { "RenderType"="Transparent" "Queue"="Transparent"}
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 200
+        
 
         GrabPass { "_GrabbyHands" }
 
@@ -101,7 +102,6 @@ Shader "Frenetic/Standard-SingleGrabpass" {
                 blur(_GrabbyHands, aberrationUV_B, BA/360).b,
                 0.0
             );
-        
             return RC;
         }
 
@@ -109,8 +109,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
             #ifndef UNITY_PASS_FORWARDADD
             if (_Transparency < 0.999)
             {
-                float4 refractedColor = Refraction(i, o, _IOR, _BlurAMT);
-                C.rgb = lerp(C.rgb, refractedColor.rgb, 1.0 - _Transparency);
+                C.rgb = lerp(C.rgb, Refraction(i, o, _IOR, _BlurAMT).rgb, 1.0 - _Transparency);
             }
             float ita = 1.0 - saturate(2 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _InnerTintRadius/_InnerTintRadius);
             float ota = saturate(1.25 - saturate(dot(normalize(UnityWorldSpaceViewDir(i.worldPos)), o.Normal)) / _OutterTintRadius/_OutterTintRadius);
