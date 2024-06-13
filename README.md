@@ -10,7 +10,6 @@ www.youtube.com/watch?v=vihPqElnht4&ab
 
 
 {Side Note}
--there's alot that i would change and even add BUT i probably wont because well.. im just lazy-
 i get bored and work on this every now and again
 
 {things i can but may not change}
