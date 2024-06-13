@@ -10,7 +10,7 @@ www.youtube.com/watch?v=vihPqElnht4&ab
 
 
 {Side Note}
-i get bored and work on this every now and again
+- i get bored and work on this every now and again
 
 {things i can but may not change}
 - adding a mask to the refraction to prevent bleeding from objects in front so it only refracts the ones behind it properly (this is just a thought currently and may not be added lmao)
