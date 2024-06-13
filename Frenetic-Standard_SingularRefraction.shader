@@ -27,7 +27,7 @@ Shader "Frenetic/Standard-SingleGrabpass" {
     }
 
     SubShader {
-        Tags { "RenderType"="Geometry" "Queue"="Transparent"}
+        Tags { "RenderType"="Transparent" "Queue"="Transparent"}
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 200
 
