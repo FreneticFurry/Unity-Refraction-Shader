@@ -2,18 +2,16 @@ Shader "Frenetic/Standard-MultiGrabpass" {
     Properties {
         [Header(Standard)] [Space] [Space]
         _Color("Texture Color/Tint", Color) = (1, 1, 1, 1)
-        _Light("Lighting Color/Tint", Color) = (1, 1, 1, 1)
         _Transparency("Transparency", Range(0, 1)) = 1
         _MainTex("Texture (RGBA)", 2D) = "white" {}
-        _NormalMap("Normal Map", 2D) = "bump" {}
-        _NormalIntensity("Normal Intensity", Range(-2, 2)) = 0
         _EmissTex("Emission (RGBA)", 2D) = "black" {}
         _EmissionColor("Emission Tint", Color) = (0, 0, 0, 0)
-        _EmissionIntensity("Emission Intensity", Range(0, 2)) = 0
         _Smooth("Smoothness", Range(0, 2)) = 0.5
         _Mat("Metallic", Range(0, 1)) = 0
-		[Header(Normal Map Scrolling)]
-        _NormalScroll("Normal Scroll", Vector) = (0,0,0,0)
+		[Header(Normal Mapping)] [Space] [Space]
+        _NormalMap("Normal Map", 2D) = "bump" {}
+        _NormalIntensity("Normal Intensity", Range(-2, 2)) = 0
+        _NormalScroll("Scroll", Vector) = (0,0,0,0)
         [Header(Refraction)] [Space] [Space]
         _IOR("IOR", Range(0, 2)) = 1
         _IORT("IOR-Type", Range(-0.5, 0.5)) = 0
@@ -24,19 +22,21 @@ Shader "Frenetic/Standard-MultiGrabpass" {
 		_InnerTintColor("Inner Tint Color", Color) = (1, 1, 1, 0)
         _OutterTintRadius("Outter Tint Radius", Range(0, 1)) = 0
         _InnerTintRadius("Inner Tint Radius", Range(0, 1)) = 1
+        [Header(Lighting)] [Space] [Space]
+        _Light("Transparency Lighting/Tint", Color) = (1, 1, 1, 1)
+        [Toggle]_Shadows("Shadows", Float) = 1
     }
 
     SubShader {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent"}
+        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
         Blend SrcAlpha OneMinusSrcAlpha
         LOD 200
         
-
         GrabPass {  }
 
         CGPROGRAM
-		#pragma surface surf Standard finalcolor:Tint 
-        #pragma target 5.0
+		#pragma surface surf Standard finalcolor:Tint
+        #pragma target 3.0
         #pragma multi_compile_instancing
 
 		struct Input {
@@ -65,7 +65,6 @@ Shader "Frenetic/Standard-MultiGrabpass" {
         uniform float _AberrationAmount;
         uniform fixed2 _NormalScroll;
         uniform float4 _EmissionColor;
-        uniform float _EmissionIntensity;
         uniform float _Transparency;
 
         float4 blur(sampler2D tex, float2 uv, float r) {
@@ -124,10 +123,49 @@ Shader "Frenetic/Standard-MultiGrabpass" {
             o.Metallic = _Mat / 1.1;
             o.Smoothness = _Smooth;
             o.Normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv_NormalMap + float2(_Time.x * _NormalScroll.x, _Time.x * _NormalScroll.y)), _NormalIntensity);
-            o.Emission = tex2D(_EmissTex, i.uv_MainTex).rgb * _EmissionIntensity + _EmissionColor.rgb * _EmissionIntensity;
+            o.Emission = tex2D(_EmissTex, i.uv_MainTex).rgb * _EmissionColor.a + _EmissionColor.rgb * _EmissionColor.a;
         }
 
         ENDCG
+    
+    Pass {
+        Tags { "LightMode" = "ShadowCaster" }
+        LOD 200
+
+        CGPROGRAM
+        #pragma multi_compile_instancing
+        #pragma vertex vert
+        #pragma fragment frag
+        #include "UnityCG.cginc"
+
+        struct v2f {
+            V2F_SHADOW_CASTER;
+            float2 uv : TEXCOORD1;
+        };
+
+        float _Shadows;
+
+        v2f vert(appdata_base v) {
+            v2f o;
+            TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+            o.uv = v.texcoord;
+            return o;
+        }
+
+        fixed4 frag(v2f i) : SV_Target {
+            if (_Shadows == 1)
+            {
+            clip(1);
+            SHADOW_CASTER_FRAGMENT(i)
+            }
+            else
+            {
+            clip(-1);
+            SHADOW_CASTER_FRAGMENT(i)
+            }
+        }
+        ENDCG
+        }
     }
     Fallback "Diffuse"
 }
