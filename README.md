@@ -8,9 +8,8 @@ there might be some parts that can be improved upon & if there is PLEASE feel fr
 anyways! hope you enjoy the shader(s) and make some cool stuff with it! this is intended for URP in Unity so idrk if it works on HDRP n such & its VRChat compatible
 www.youtube.com/watch?v=vihPqElnht4&ab
 
-
 {Side Note}
-- i get bored and work on this every now and again
+- this probably wont get any more updates but it may get some in the future
 
 {things i can but may not change}
 - adding a mask to the refraction to prevent bleeding from objects in front so it only refracts the ones behind it properly (this is just a thought currently and may not be added lmao)
