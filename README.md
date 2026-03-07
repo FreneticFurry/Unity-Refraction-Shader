@@ -19,6 +19,8 @@ www.youtube.com/watch?v=vihPqElnht4&ab
 - you may edit this shader & even redistribute it but i only ask that you credit me somewhere's in it!
 - you can also support my random creations on patreon :) https://www.patreon.com/FreneticFurry
 
+DO NOT SELL THIS EVEN IF YOU MAKE EDITS.
+
 ![image](https://github.com/FreneticFurry/Unity-Refraction-Shader/assets/158255865/5788cced-834e-4ebe-b999-77f11de1768a)
 ![image](https://github.com/FreneticFurry/Unity-Refraction-Shader/assets/158255865/61c1d9ed-8812-4b37-bf94-1e6b2bc1a7d2)
 ![image](https://github.com/FreneticFurry/Unity-Refraction-Shader/assets/158255865/553c0e71-8b3f-4688-aeb6-bd3a904c8846)
